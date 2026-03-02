@@ -1,0 +1,8 @@
+{
+    "index": "List",
+    "store": "Create",
+    "update": "Update",
+    "show": "Show",
+    "delete": "Delete",
+    "restore": "Restore"
+}

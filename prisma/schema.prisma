@@ -5,14 +5,37 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
-  id         String   @id @default(uuid())
+  id         Int      @id @default(autoincrement())
+  uid        String   @unique @default(uuid())
   email      String   @unique
   password   String
   full_name  String
   created_at DateTime @default(now())
-  updated_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  is_deleted Boolean  @default(false)
+  posts      Post[]
+
+  @@index([is_deleted])
+
+  @@map("users")
+}
+
+model Post {
+  id         String   @id @default(uuid())
+  uid        String   @unique @default(uuid())
+  title      String
+  content    String
+  user_id    Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  is_deleted Boolean  @default(false)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+
+  @@map("posts")
 }
