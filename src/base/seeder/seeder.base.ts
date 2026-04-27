@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from "@generated/prisma";
 
 export abstract class BaseSeeder {
     abstract modelName: string;

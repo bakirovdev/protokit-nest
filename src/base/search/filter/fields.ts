@@ -1,16 +1,2 @@
-export const numericFields = [
-    'company_id', 
-    'id',
-    'user_id',
-    'parent_id',
-    'owner_id',
-    'director_id',
-    'repository_id',
-    'supplier_id',
-    'client_id',
-    'currency_id',
-    'cashbox_id',
-    'invoice_id',
-    'product_id',
-    'variation_id',    
+export const numericFields: string[] = [
 ];

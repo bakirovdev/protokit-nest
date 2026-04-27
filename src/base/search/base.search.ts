@@ -2,7 +2,7 @@ import { SearchFilter } from "./search-filter";
 import { PrismaModels } from "@src/prisma/types";
 import { Inject, Injectable } from "@nestjs/common";
 import { PrismaService } from "@src/prisma/prisma.service";
-import { PaginateFunction, paginator } from "@src/helpers/pagination.helper";
+import { PaginateFunction, paginator } from "@src/base/helpers/pagination.helper";
 
 const paginate: PaginateFunction = paginator({ perPage: 10 });
 type GenerateArgParamType = {

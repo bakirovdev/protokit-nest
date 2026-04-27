@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FullUserType } from '@src/base/http/services';
-import { handleError } from '@src/helpers';
+import { handleError } from '@src/base/helpers';
 import { AsyncLocalStorage } from 'async_hooks';
 import { Request, Response } from 'express';
 
@@ -65,11 +65,11 @@ export class RequestContextService {
 
   }
 
-  static getExcludeId():number | undefined {
+  static getExcludeId(): string | undefined {
     const context = this.getContext();
 
     if (context?.request?.params) {
-      return +context?.request?.params?.id || undefined;
+      return context?.request?.params?.id || undefined;
     }
     return undefined;
   }

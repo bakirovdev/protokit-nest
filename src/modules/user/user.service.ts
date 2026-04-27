@@ -1,26 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
+import type { Request } from 'express';
+import { Prisma } from '@generated/prisma';
+import { BaseService } from '@src/base/http/services/base.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UserSearch } from './user.search';
+import { UserResource } from './resources/user.resource';
 
-@Injectable()
-export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
+@Injectable({ scope: Scope.REQUEST })
+export class UserService extends BaseService {
+  protected resource = UserResource;
 
-  findAll() {
-    return {data: []};
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  constructor(
+    @Inject(REQUEST) request: Request,
+    search: UserSearch,
+  ) {
+    super(Prisma.ModelName.User, request, CreateUserDto, search);
   }
 }

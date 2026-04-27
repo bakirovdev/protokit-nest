@@ -1,21 +1,19 @@
 import { Injectable } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@generated/prisma";
 import { PrismaService } from "@src/prisma/prisma.service";
 import { registerDecorator, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
-import { HierarchyService } from "../http/services";
 
 export interface IsExistInterface {
     model: Prisma.ModelName;
     column?: string;
-    extra_query?: ((dto: any, hierarchyService: HierarchyService) => Record<string, any> | Promise<Record<string, any>>);
+    extra_query?: ((dto: any) => Record<string, any> | Promise<Record<string, any>>);
 }
 
 @Injectable()
 @ValidatorConstraint({ name: 'IsExistConstraint', async: true })
 export class IsExistConstraint implements ValidatorConstraintInterface {
     
-    constructor(
-        private hierarchyService: HierarchyService,
+    constructor(        
         private prisma: PrismaService,    
     ) {}
 
@@ -32,7 +30,7 @@ export class IsExistConstraint implements ValidatorConstraintInterface {
                 [column || 'id']: {in: value} 
             };            
             if (extra_query) {
-                const extraConditions =  await extra_query(dtoInstance, this.hierarchyService);
+                const extraConditions =  await extra_query(dtoInstance);
                 Object.assign(where, extraConditions);
             }                        
             

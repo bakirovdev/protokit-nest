@@ -1,8 +1,6 @@
 import { Injectable, Scope, Inject, UnauthorizedException } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
-import { UserProfile, UserTypeEnum } from '@prisma/client';
-import { CustomTokenPayload } from '@src/base/interfaces';
-import { UserSearch } from '@src/modules/user/user/user.search';
+import { UserSearch } from '@src/modules/user/user.search';
 import { PrismaService } from '@src/prisma/prisma.service';
 import type { Request } from 'express';
 
@@ -13,18 +11,14 @@ declare module 'express' {
 }
 
 export type FullUserType = {
-    id: number,
-    email: string,
-    type: UserTypeEnum,
+    id: string,
+    email: string,    
     created_at: Date,
     updated_at: Date,
-    is_deleted: Boolean,
-    company_id?: number | null
-    profile?: UserProfile | null,
+    is_deleted: Boolean,        
     role?: {
-        id: number,
-        name: string
-        type: UserTypeEnum
+        id: string,
+        name: string        
         description?: string|null
         permissions: string[]
     }|null
@@ -42,7 +36,7 @@ export class AuthUserService {
         return this.request.user;
     }
 
-    getCurrentUserId(): number 
+    getCurrentUserId(): string
     {
         const user = this.getCurrentUser();
         if (!user) {
@@ -88,8 +82,7 @@ export class AuthUserService {
             ...fullUser,
             role: fullUser.role ? {
                 id: fullUser.role.id,
-                name: fullUser.role.name,
-                type: fullUser.role.type,
+                name: fullUser.role.name,                
                 description: fullUser.role.description,
                 permissions: permissions
             }: null

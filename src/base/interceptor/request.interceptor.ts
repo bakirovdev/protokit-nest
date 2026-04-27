@@ -7,7 +7,7 @@ export class RequestInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest();
 
     if (request.params?.id) {
-      const excludeId = parseInt(request.params.id, 10);
+      const excludeId = String(request.params.id);
 
       if (!request.body) {
         request.body = {}

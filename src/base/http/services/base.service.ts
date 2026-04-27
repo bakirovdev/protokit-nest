@@ -1,9 +1,9 @@
-import { ApiResponse, ApiResponseType, PGResponseType } from "@src/helpers/response.helper";
+import { ApiResponse, ApiResponseType, PGResponseType } from "@src/base/helpers/response.helper";
 import { PrismaService } from "@src/prisma/prisma.service";
 import { JsonResource } from "../resources/json.resource";
 import { BaseResource } from "../resources/base.resource";
 import { Inject, Injectable } from "@nestjs/common";
-import { handleError } from "@src/helpers/error-handle.helper";
+import { handleError } from "@src/base/helpers/error-handle.helper";
 import type { PrismaModels } from "@src/prisma/types";
 import { ClassConstructor, plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
@@ -67,7 +67,7 @@ export abstract class BaseService {
         }
     }
 
-    async findOne(id: number, filters?: any): Promise<ApiResponseType<any>> {
+    async findOne(id: string, filters?: any): Promise<ApiResponseType<any>> {
         try {
             await this.baseFilters();
             const result = await this.search.findFirst({ where: { id } ,select: this.search?.safeSelect || undefined});
@@ -94,7 +94,7 @@ export abstract class BaseService {
         }
     }
 
-    async update(id: number, data: any): Promise<ApiResponseType<any>> {
+    async update(id: string, data: any): Promise<ApiResponseType<any>> {
         try {
             await this.baseFilters();
             let inputData = await this.validateDto(data, 'update');
@@ -111,7 +111,7 @@ export abstract class BaseService {
         }
     }
 
-    async delete(id: number): Promise<ApiResponseType<any>> {
+    async delete(id: string): Promise<ApiResponseType<any>> {
         try {
             await this.baseFilters();            
                         
@@ -126,7 +126,7 @@ export abstract class BaseService {
         }
     }
 
-    async restore(id: number): Promise<ApiResponseType<any>> {
+    async restore(id: string): Promise<ApiResponseType<any>> {
         try {
             await this.baseFilters();
             const model = await this.search.findFirst({where: {id, is_deleted: true}});

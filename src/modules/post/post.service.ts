@@ -1,26 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
+import type { Request } from 'express';
+import { Prisma } from '@generated/prisma';
+import { BaseService } from '@src/base/http/services/base.service';
 import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { PostSearch } from './post.search';
+import { PostResource } from './resources/post.resource';
 
-@Injectable()
-export class PostService {
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
-  }
+@Injectable({ scope: Scope.REQUEST })
+export class PostService extends BaseService {
+  protected resource = PostResource;
 
-  findAll() {
-    return `This action returns all post`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
-  }
-
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  constructor(
+    @Inject(REQUEST) request: Request,
+    search: PostSearch,
+  ) {
+    super(Prisma.ModelName.Post, request, CreatePostDto, search);
   }
 }

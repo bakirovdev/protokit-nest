@@ -2,6 +2,7 @@ import configs from './configs';
 import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { UserModule } from './modules/user/user.module';
 import { PostModule } from './modules/post/post.module';
+import { RoleModule } from './modules/role/role.module';
 import { ConfigModule } from '@nestjs/config';
 import { AcceptLanguageResolver, I18nJsonLoader, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -41,8 +42,9 @@ import { MethodOverrideMiddleware } from './base/middlewares/method-overdirve.mi
     ValidatorsModule,
     PipeModule,
     PrismaModule,
-    UserModule, 
+    UserModule,
     PostModule,
+    RoleModule,
     SharedModule,
   ],
   providers: [

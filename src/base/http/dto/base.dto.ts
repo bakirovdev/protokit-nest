@@ -7,7 +7,7 @@ export enum ToPrismaTypeEnum {
 export class BaseDto 
 {
     @IsOptional()
-    _excludeId: number
+    _excludeId: string
 
     toCreate(type: ToPrismaTypeEnum): any 
     {

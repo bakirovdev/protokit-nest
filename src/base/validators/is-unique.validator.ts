@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@generated/prisma';
 import { PrismaService } from '@src/prisma/prisma.service';
 import {
   registerDecorator,
@@ -8,22 +8,20 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { HierarchyService } from '../http/services';
 import { RequestContextService } from '../middlewares/request-context/request-context.service';
 
 export interface IsUniqueInterface {
   model: Prisma.ModelName;
   column: string;
   exclude?: boolean;
-  extra_query?: ((dto: any, hierarchyService: HierarchyService) => Record<string, any> | Promise<Record<string, any>>);
+  extra_query?: ((dto: any,) => Record<string, any> | Promise<Record<string, any>>);
 }
 
 @Injectable()
 @ValidatorConstraint({ name: 'IsUniqueConstraint', async: true })
 export class IsUniqueConstraint implements ValidatorConstraintInterface 
 {
-  constructor(    
-    private hierarchyService: HierarchyService,
+  constructor(        
     private readonly prismaService: PrismaService,    
   ){}
 
@@ -39,7 +37,7 @@ export class IsUniqueConstraint implements ValidatorConstraintInterface
       
       // Add extra query conditions
       if (extra_query) {
-        const extraConditions = await extra_query(dtoInstance, this.hierarchyService)
+        const extraConditions = await extra_query(dtoInstance)
         Object.assign(where, extraConditions);
       }      
       

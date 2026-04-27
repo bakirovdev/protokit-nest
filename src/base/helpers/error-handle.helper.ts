@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, UnprocessableEntityException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@generated/prisma';
 import { createValidationException } from '@src/base/exceptions/i18-validation-exception.factor';
 import { AxiosError } from 'axios';
 import { ValidationError } from 'class-validator';

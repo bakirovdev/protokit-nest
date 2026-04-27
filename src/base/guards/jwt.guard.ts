@@ -3,19 +3,15 @@ import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 import { CustomTokenPayload } from "../interfaces";
 import { PrismaService } from "@src/prisma/prisma.service";
-import { UserSearch } from "@src/modules/user/user/user.search";
-import { UserProfile, UserTypeEnum } from "@prisma/client";
+import { UserSearch } from "@src/modules/user/user.search";
 import { RequestContextService } from "../middlewares/request-context/request-context.service";
 
 export type AuthUserType = {
-  id: number,
-  email: string,
-  type: UserTypeEnum,
+  id: string,
+  email: string,  
   created_at: Date,
   updated_at: Date,
   is_deleted: Boolean,
-  company_id: number | null
-  profile: UserProfile | null,    
 }
 
 @Injectable()
@@ -49,8 +45,7 @@ export class JwtAuthGuard implements CanActivate {
           id: payload.sub
         },
         select: {
-          ...userSelect,
-          profile: true
+          ...userSelect,          
         },
       });
 

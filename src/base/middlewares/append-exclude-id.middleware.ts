@@ -9,27 +9,27 @@ export class AppendExcludeIdMiddleware {
     const params = req.params || {};
 
     // 1️⃣ Check for real named param :id
-    if (params.id && !isNaN(params.id)) {
-      req.body._excludeId = Number(params.id);
+    if (params.id) {
+      req.body._excludeId = String(params.id);
       return next();
     }
 
     if (Array.isArray(params.path)) {
       const last = params.path[params.path.length - 1];
-      if (!isNaN(last)) {
-        req.body._excludeId = Number(last);
+      if (last) {
+        req.body._excludeId = String(last);
         return next();
       }
     }
 
     for (const key of Object.keys(params)) {
       const value = params[key];
-      if (!isNaN(value)) {
-        req.body._excludeId = Number(value);
+      if (value) {
+        req.body._excludeId = String(value);
         return next();
       }
     }
-    
+
     next();
   }
 }

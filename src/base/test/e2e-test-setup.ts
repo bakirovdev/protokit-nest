@@ -1,9 +1,9 @@
+import { expect } from "@jest/globals";
 import { INestApplication, Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from "@src/app.module";
-import { AuthService } from "@src/modules/common/auth/auth.service";
-import { UserProfileType } from "@src/modules/user/user/fields";
 import { PrismaService } from "@src/prisma/prisma.service";
 import { I18nService } from "nestjs-i18n";
 import request from 'supertest';
@@ -21,25 +21,24 @@ export type RequestOptions = {
 }
 
 @Injectable()
-export abstract class E2ETestSetup {    
-    userId: number;
+export abstract class E2ETestSetup {
+    userId!: string;
     routePath: string = ''
 
-    protected search: BaseSearch
-    protected prisma: PrismaService
-    protected app: INestApplication;
-    protected moduleFixture: TestingModule;
-    protected requestHeaders = [];    
+    protected search!: BaseSearch
+    protected prisma!: PrismaService
+    protected app!: INestApplication;
+    protected moduleFixture!: TestingModule;
+    protected requestHeaders: Record<string, string> = {};
 
-    private allRequestHeaders = {
+    private allRequestHeaders: Record<string, string> = {
         'Accept': 'application/json',
         'Accept-Language': 'en'
     };
     private requestMethod: 'get' | 'post' | 'put' | 'patch' | 'delete' = 'get';
-    private requestUrl: string;
+    private requestUrl!: string;
     private requestQuery: any = {}
     private requestBody: any = {}
-    private requestFiles: any = {}
 
     async setUp(): Promise<void> {
         process.env.JWT_SECRET = process.env.JWT_SECRET || 'testsecret';
@@ -115,7 +114,8 @@ export abstract class E2ETestSetup {
         try {            
             this.requestUrl = this.routePath + this.requestUrl;
             this.requestUrl = requestQueryToString ? this.requestUrl + '?' + requestQueryToString : this.requestUrl;
-            return this[this.requestMethod](this.requestUrl);
+            const method = this.requestMethod as 'get' | 'post' | 'delete';
+            return this[method](this.requestUrl);
         } catch (error) {            
             console.log(error);
             throw error;
@@ -128,19 +128,22 @@ export abstract class E2ETestSetup {
         const user = await prisma.user.findFirst({
             select: {
                 id: true,
-                email: true,
-                type: true,
+                email: true,                
                 password: true,
                 profile: true
             },
             where: { id: this.userId }
         });
 
-        const authService = await this.app.resolve<AuthService>(AuthService);        
+        const jwtService = this.app.get<JwtService>(JwtService);
 
-        const tokenResponse = await authService.generateToken(user as UserProfileType)                
+        const access_token = await jwtService.signAsync({
+            sub: user!.id,
+            email: user!.email,
+            tokenType: 'access',
+        });
 
-        this.allRequestHeaders['Authorization'] = `Bearer ${tokenResponse.access_token}`;        
+        this.allRequestHeaders['Authorization'] = `Bearer ${access_token}`;
     }
 
     /**

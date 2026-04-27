@@ -4,7 +4,6 @@ import { PrismaService } from '@src/prisma/prisma.service';
 import { JwtAuthGuard, RoleGuard } from '@src/base/guards';
 import { AuthUserService } from '@src/base/http/services/auth-user.service';
 import { FileService } from '@src/base/http/services/file.service';
-import { HierarchyService } from '@src/base/http/services';
 
 @Global()
 @Module({
@@ -20,8 +19,7 @@ import { HierarchyService } from '@src/base/http/services';
     JwtAuthGuard,
     RoleGuard,
     AuthUserService,
-    FileService,
-    HierarchyService
+    FileService,    
   ],
   exports: [
     PrismaService,
@@ -29,8 +27,7 @@ import { HierarchyService } from '@src/base/http/services';
     JwtAuthGuard,
     RoleGuard,
     AuthUserService,
-    FileService,
-    HierarchyService
+    FileService,    
   ],
 })
 export class SharedModule {}

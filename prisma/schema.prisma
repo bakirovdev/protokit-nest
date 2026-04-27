@@ -8,19 +8,45 @@ datasource db {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(uuid())
   uid        String   @unique @default(uuid())
   email      String   @unique
   password   String
   full_name  String
+  role_id    String?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   is_deleted Boolean  @default(false)
-  posts      Post[]
+
+  posts   Post[]
+  role    Role?        @relation(fields: [role_id], references: [id])
+  profile UserProfile?
 
   @@index([is_deleted])
-
   @@map("users")
+}
+
+model UserProfile {
+  id         String   @id @default(uuid())
+  uid        String   @unique @default(uuid())
+  user_id    String   @unique
+  first_name String
+  last_name  String
+  phone      String?
+  gender     Gender?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  is_deleted Boolean  @default(false)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+enum Gender {
+  male
+  female
+  other
 }
 
 model Post {
@@ -28,7 +54,7 @@ model Post {
   uid        String   @unique @default(uuid())
   title      String
   content    String
-  user_id    Int
+  user_id    String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   is_deleted Boolean  @default(false)
@@ -36,6 +62,41 @@ model Post {
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([user_id])
-
   @@map("posts")
+}
+
+model Role {
+  id          String    @id @default(uuid())
+  uid         String    @unique @default(uuid())
+  name        String
+  description String?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime? @updatedAt
+  is_deleted  Boolean   @default(false)
+
+  users               User[]
+  role_permission_ref RolePermissionRef[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
+
+  role_permission_ref RolePermissionRef[]
+
+  @@map("permissions")
+}
+
+model RolePermissionRef {
+  role_id       String
+  permission_id String
+
+  role       Role       @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permission_id], references: [id], onDelete: Cascade)
+
+  @@unique([role_id, permission_id])
+  @@map("role_permission_ref")
 }

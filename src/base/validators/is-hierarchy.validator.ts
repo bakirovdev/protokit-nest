@@ -1,18 +1,17 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "@src/prisma/prisma.service";
 import { registerDecorator, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
-import { HierarchyService } from "../http/services";
 
 export interface IsHierarchyInterface {    
     column: string
-    process: ((dto: any, hierarchyService: HierarchyService, prisma: PrismaService) => boolean | Promise<boolean>);
+    process: ((dto: any, prisma: PrismaService) => boolean | Promise<boolean>);
 }
 
 @Injectable()
 @ValidatorConstraint({ name: 'IsExistConstraint', async: true })
 export class IsHierarchyConstraint implements ValidatorConstraintInterface {
     
-    constructor(private hierarchyService: HierarchyService, private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService) {}
 
     async validate(value: any, args?: ValidationArguments): Promise<boolean> {
         const { process } = args?.constraints[0] as IsHierarchyInterface;
@@ -20,7 +19,7 @@ export class IsHierarchyConstraint implements ValidatorConstraintInterface {
         const dtoInstance = args?.object as any;
 
         try {            
-            const extraConditions =  await process(dtoInstance, this.hierarchyService, this.prisma);
+            const extraConditions =  await process(dtoInstance, this.prisma);
 
             return extraConditions ? true : false;
         } catch (error) {

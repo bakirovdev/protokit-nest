@@ -1,10 +1,8 @@
-import { User, UserTypeEnum } from "@prisma/client";
-import { UserProfileType } from "@src/modules/user/user/fields";
+import { User, UserProfile } from "@generated/prisma";
 
 export interface CustomTokenPayload {
-    sub: number; // user ID
+    sub: string; // user ID
     email: string;
-    type: UserTypeEnum;
     tokenType: 'access' | 'refresh';
     iat: number;
     exp: number;
@@ -15,5 +13,7 @@ export interface TokenResponse {
     refresh_token: string;
     token_type: string;
     expires_in: number;
-    user: UserProfileType
+    user: User & {
+        profile: UserProfile | null
+    }
 }
